@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coreProperties xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">
+  <dc:creator>const.me</dc:creator>
+  <dc:description>High-performance GPGPU inference of OpenAI's Whisper automatic speech recognition (ASR) model</dc:description>
+  <dc:identifier>WhisperPS</dc:identifier>
+  <version>1.12.0</version>
+  <keywords>Windows PSEdition_Desktop PSModule PSIncludes_Cmdlet PSCmdlet_Get-Adapters PSCmdlet_Import-WhisperModel PSCmdlet_Transcribe-File PSCmdlet_Format-Segments PSCmdlet_Export-Text PSCmdlet_Export-SubRip PSCmdlet_Export-WebVTT PSCommand_Get-Adapters PSCommand_Import-WhisperModel PSCommand_Transcribe-File PSCommand_Format-Segments PSCommand_Export-Text PSCommand_Export-SubRip PSCommand_Export-WebVTT</keywords>
+  <lastModifiedBy>NuGet.Build.Tasks.Pack, Version=6.6.0.66, Culture=neutral, PublicKeyToken=31bf3856ad364e35;.NET Standard 2.0</lastModifiedBy>
+</coreProperties>

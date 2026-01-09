@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>WhisperPS</id>
+    <version>1.12.0</version>
+    <authors>const.me</authors>
+    <owners>const.me</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://www.mozilla.org/en-US/MPL/2.0/</licenseUrl>
+    <projectUrl>https://github.com/Const-me/Whisper</projectUrl>
+    <description>High-performance GPGPU inference of OpenAI's Whisper automatic speech recognition (ASR) model</description>
+    <releaseNotes>When loading models, adapters can be selected with 0-based index, in addition to the name.
+Added an API method to decode initial prompt into array of tokens.</releaseNotes>
+    <copyright>(c) 2023 const.me. All rights reserved.</copyright>
+    <tags>Windows PSEdition_Desktop PSModule PSIncludes_Cmdlet PSCmdlet_Get-Adapters PSCmdlet_Import-WhisperModel PSCmdlet_Transcribe-File PSCmdlet_Format-Segments PSCmdlet_Export-Text PSCmdlet_Export-SubRip PSCmdlet_Export-WebVTT PSCommand_Get-Adapters PSCommand_Import-WhisperModel PSCommand_Transcribe-File PSCommand_Format-Segments PSCommand_Export-Text PSCommand_Export-SubRip PSCommand_Export-WebVTT</tags>
+  </metadata>
+</package>

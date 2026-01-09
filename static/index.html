@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Whisper Turbo Video Transcriber</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <main class="app">
+      <header class="app-header">
+        <div class="logo-pill">WT</div>
+        <div>
+          <h1>Whisper Turbo Video Transcriber</h1>
+          <p>Local, private transcription with real-time progress and clean exports.</p>
+        </div>
+      </header>
+
+      <nav class="tab-bar">
+        <button class="tab-button active" data-tab="transcribe">Transcribe</button>
+        <button class="tab-button" data-tab="history">Previous jobs</button>
+      </nav>
+
+      <div class="tab-panel active" data-tab="transcribe" id="panelTranscribe">
+        <section class="card env-card">
+          <div class="status-header">
+            <h2>Environment status</h2>
+            <div id="envBadge" class="badge">Checking</div>
+          </div>
+          <div class="env-grid">
+            <div id="envPython" class="env-item">Python: checking...</div>
+            <div id="envWhisper" class="env-item">Whisper: checking...</div>
+            <div id="envFfmpeg" class="env-item">ffmpeg: checking...</div>
+            <div id="envFfprobe" class="env-item">ffprobe: checking...</div>
+            <div id="envAmd" class="env-item">AMD GPU: checking...</div>
+          </div>
+          <div class="actions">
+            <button id="installButton" class="btn primary" disabled>Install Whisper</button>
+            <div id="installHint" class="hint"></div>
+          </div>
+          <pre id="installLog" class="install-log"></pre>
+        </section>
+
+        <section class="card upload-card">
+          <h2>Upload a video</h2>
+          <div id="dropzone" class="dropzone">
+            <input id="fileInput" type="file" accept=".mp4,.mov,.mkv,.avi,.webm,.flv,.mpeg,.mpg,.m4v">
+            <div class="dropzone-content">
+              <div class="dropzone-icon">+</div>
+              <div>
+                <div class="dropzone-title">Drag and drop a video file</div>
+                <div class="dropzone-subtitle">or click to browse from disk</div>
+              </div>
+            </div>
+            <div id="fileMeta" class="file-meta">No file selected</div>
+          </div>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>Output format</span>
+              <select id="outputFormat">
+                <option value="txt">TXT</option>
+                <option value="srt">SRT</option>
+                <option value="vtt">VTT</option>
+                <option value="json">JSON</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Language (auto by default)</span>
+              <input id="language" type="text" placeholder="auto">
+            </label>
+            <label class="field">
+              <span>Device</span>
+              <select id="deviceSelect">
+                <option value="auto">Auto</option>
+                <option value="cpu">CPU</option>
+                <option value="cuda">CUDA GPU</option>
+              </select>
+            </label>
+            <label class="field hidden" id="whisperpsModelField">
+              <span>AMD Whisper model</span>
+              <select id="whisperpsModelSelect"></select>
+            </label>
+            <label class="field field-inline">
+              <input id="wordTimestamps" type="checkbox">
+              <span>Include word timestamps (JSON only)</span>
+            </label>
+          </div>
+
+          <div class="actions">
+            <button id="startButton" class="btn primary">Start transcription</button>
+            <button id="cancelButton" class="btn ghost" disabled>Cancel job</button>
+          </div>
+          <div id="uploadHint" class="hint">Max upload size is configurable via MAX_UPLOAD_MB.</div>
+        </section>
+
+        <section class="card status-card">
+          <div class="status-header">
+            <h2>Job status</h2>
+            <div class="status-tags">
+              <div id="deviceBadge" class="chip hidden"></div>
+              <div id="statusBadge" class="badge">Idle</div>
+            </div>
+          </div>
+          <div class="steps" id="steps">
+            <div class="step" data-step="uploading">
+              <div class="step-icon">1</div>
+              <div>Uploading</div>
+            </div>
+            <div class="step" data-step="extracting">
+              <div class="step-icon">2</div>
+              <div>Extracting audio</div>
+            </div>
+            <div class="step" data-step="loading_model">
+              <div class="step-icon">3</div>
+              <div>Loading model</div>
+            </div>
+            <div class="step" data-step="transcribing">
+              <div class="step-icon">4</div>
+              <div>Transcribing</div>
+            </div>
+            <div class="step" data-step="packaging">
+              <div class="step-icon">5</div>
+              <div>Packaging output</div>
+            </div>
+            <div class="step" data-step="done">
+              <div class="step-icon">6</div>
+              <div>Done</div>
+            </div>
+          </div>
+
+          <div class="progress-wrapper">
+            <div class="progress-bar">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <div id="progressLabel" class="progress-label">Waiting for upload</div>
+          </div>
+
+          <div class="status-info">
+            <div id="statusMessage" class="status-message">Idle</div>
+            <div id="audioInfo" class="status-subtle"></div>
+            <div id="errorMessage" class="status-error"></div>
+          </div>
+
+          <div class="debug-card">
+            <div class="debug-header">
+              <h3>Debug</h3>
+              <button id="debugToggle" class="btn ghost">Show debug</button>
+            </div>
+            <div id="debugContent" class="debug-content hidden">
+              <div id="debugMeta" class="debug-meta"></div>
+              <pre id="debugLog" class="debug-log">No debug output yet.</pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="card result-card">
+          <div class="result-header">
+            <h2>Transcript preview</h2>
+            <div class="dropdown">
+              <button id="downloadButton" class="btn primary" disabled>Download</button>
+              <div id="downloadMenu" class="dropdown-menu hidden">
+                <button data-format="txt">Download TXT</button>
+                <button data-format="srt">Download SRT</button>
+                <button data-format="vtt">Download VTT</button>
+                <button data-format="json">Download JSON</button>
+              </div>
+            </div>
+          </div>
+          <pre id="preview" class="preview">Waiting for a finished transcript...</pre>
+        </section>
+      </div>
+
+      <div class="tab-panel" data-tab="history" id="panelHistory">
+        <section class="card history-card">
+          <div class="history-header">
+            <div>
+              <h2>Previous jobs</h2>
+              <p class="muted">Browse finished runs and grab any export without re-processing.</p>
+            </div>
+            <div class="history-actions">
+              <button id="refreshHistory" class="btn ghost">Refresh</button>
+            </div>
+          </div>
+          <div id="historyList" class="history-list">
+            <div class="empty-state">
+              <div class="empty-title">No jobs yet</div>
+              <div class="empty-subtitle">Start a transcription to see it appear here.</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

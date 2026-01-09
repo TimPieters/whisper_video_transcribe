@@ -1,0 +1,703 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<helpItems schema="maml" xmlns="http://msh">
+  <!-- Cmdlet: Get-Adapters -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Get-Adapters</command:name>
+      <command:verb>Get</command:verb>
+      <command:noun>Adapters</command:noun>
+      <maml:description>
+        <maml:para>Produces list of the names of the GPUs available to Direct3D 11</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>You can pass any of these strings to the adapter argument of the Import-WhisperModel cmdlet.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Get-Adapters</maml:name>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters />
+    <command:inputTypes />
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>Get-Adapters</dev:code>
+      </command:example>
+    </command:examples>
+  </command:command>
+  <!-- Cmdlet: Transcribe-File -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Transcribe-File</command:name>
+      <command:verb>Transcribe</command:verb>
+      <command:noun>File</command:noun>
+      <maml:description>
+        <maml:para>Transcribe audio file from disk</maml:para>
+      </maml:description>
+    </command:details>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Transcribe-File</maml:name>
+        <!-- Parameter: model -->
+        <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+          <maml:name>model</maml:name>
+          <maml:description>
+            <maml:para>Use Import-WhisperModel command to load the model from disk</maml:para>
+          </maml:description>
+          <command:parameterValue required="true">Model</command:parameterValue>
+          <dev:type>
+            <maml:name>Whisper.Model</maml:name>
+            <maml:uri />
+            <maml:description>
+              <maml:para>For large models, the data size may exceed 4GB of video memory</maml:para>
+            </maml:description>
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: path -->
+        <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1">
+          <maml:name>path</maml:name>
+          <maml:description>
+            <maml:para>The command supports most audio and video formats, with the notable exception of Ogg Vorbis.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: language -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>language</maml:name>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: maxSegmentLength -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>maxSegmentLength</maml:name>
+          <maml:description>
+            <maml:para>The default is 60</maml:para>
+          </maml:description>
+          <command:parameterValue required="true">ushort</command:parameterValue>
+          <dev:type>
+            <maml:name>System.UInt16</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>60</dev:defaultValue>
+        </command:parameter>
+        <!-- Parameter: prompt -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>prompt</maml:name>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: threads -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>threads</maml:name>
+          <maml:description>
+            <maml:para>Specify 1 to disable multithreading</maml:para>
+          </maml:description>
+          <command:parameterValue required="true">int</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>16</dev:defaultValue>
+        </command:parameter>
+        <!-- Parameter: translate -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>translate</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <!-- Parameter: path -->
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="1">
+        <maml:name>path</maml:name>
+        <maml:description>
+          <maml:para>The command supports most audio and video formats, with the notable exception of Ogg Vorbis.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: model -->
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+        <maml:name>model</maml:name>
+        <maml:description>
+          <maml:para>Use Import-WhisperModel command to load the model from disk</maml:para>
+        </maml:description>
+        <command:parameterValue required="true">Model</command:parameterValue>
+        <dev:type>
+          <maml:name>Whisper.Model</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para>For large models, the data size may exceed 4GB of video memory</maml:para>
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: language -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>language</maml:name>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: translate -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>translate</maml:name>
+        <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <!-- Parameter: threads -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>threads</maml:name>
+        <maml:description>
+          <maml:para>Specify 1 to disable multithreading</maml:para>
+        </maml:description>
+        <command:parameterValue required="true">int</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>16</dev:defaultValue>
+      </command:parameter>
+      <!-- Parameter: prompt -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>prompt</maml:name>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: maxSegmentLength -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>maxSegmentLength</maml:name>
+        <maml:description>
+          <maml:para>The default is 60</maml:para>
+        </maml:description>
+        <command:parameterValue required="true">ushort</command:parameterValue>
+        <dev:type>
+          <maml:name>System.UInt16</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>60</dev:defaultValue>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <maml:description>
+          <maml:para>The command supports most audio and video formats, with the notable exception of Ogg Vorbis.</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>$res = Transcribe-File -model $m -path C:\Temp\SampleClips\jfk.wav</dev:code>
+      </command:example>
+    </command:examples>
+  </command:command>
+  <!-- Cmdlet: Format-Segments -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Format-Segments</command:name>
+      <command:verb>Format</command:verb>
+      <command:noun>Segments</command:noun>
+      <maml:description>
+        <maml:para>Format transcribe results as a sequence of segments.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>Each segment has a pair of timestamps, and the text</maml:para>
+    </maml:description>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Format-Segments</maml:name>
+        <!-- Parameter: source -->
+        <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+          <maml:name>source</maml:name>
+          <command:parameterValue required="true">Transcription</command:parameterValue>
+          <dev:type>
+            <maml:name>Whisper.Transcription</maml:name>
+            <maml:uri />
+            <maml:description>
+              <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+            </maml:description>
+          </dev:type>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <!-- Parameter: source -->
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+        <maml:name>source</maml:name>
+        <command:parameterValue required="true">Transcription</command:parameterValue>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+        </dev:type>
+        <maml:description>
+          <maml:para>It requires the value of the correct type</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>Format-Segments $transcribeResults</dev:code>
+      </command:example>
+    </command:examples>
+  </command:command>
+  <!-- Cmdlet: Export-SubRip -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Export-SubRip</command:name>
+      <command:verb>Export</command:verb>
+      <command:noun>SubRip</command:noun>
+      <maml:description>
+        <maml:para>Write transcribe results into SubRip format.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>The format is documented there: https://en.wikipedia.org/wiki/SubRip#SubRip_file_format</maml:para>
+    </maml:description>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Export-SubRip</maml:name>
+        <!-- Parameter: path -->
+        <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+          <maml:name>path</maml:name>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: source -->
+        <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+          <maml:name>source</maml:name>
+          <command:parameterValue required="true">Transcription</command:parameterValue>
+          <dev:type>
+            <maml:name>Whisper.Transcription</maml:name>
+            <maml:uri />
+            <maml:description>
+              <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+            </maml:description>
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: offset -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>offset</maml:name>
+          <command:parameterValue required="true">int</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>0</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <!-- Parameter: offset -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>offset</maml:name>
+        <command:parameterValue required="true">int</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>0</dev:defaultValue>
+      </command:parameter>
+      <!-- Parameter: source -->
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+        <maml:name>source</maml:name>
+        <command:parameterValue required="true">Transcription</command:parameterValue>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: path -->
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+        <maml:name>path</maml:name>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+        </dev:type>
+        <maml:description>
+          <maml:para>It requires the value of the correct type</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>Export-SubRip $transcribeResults -path transcript.srt</dev:code>
+      </command:example>
+    </command:examples>
+  </command:command>
+  <!-- Cmdlet: Export-Text -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Export-Text</command:name>
+      <command:verb>Export</command:verb>
+      <command:noun>Text</command:noun>
+      <maml:description>
+        <maml:para>Write transcribe results into SubRip format.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>The format is documented there: https://en.wikipedia.org/wiki/SubRip#SubRip_file_format</maml:para>
+    </maml:description>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Export-Text</maml:name>
+        <!-- Parameter: path -->
+        <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+          <maml:name>path</maml:name>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: source -->
+        <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+          <maml:name>source</maml:name>
+          <command:parameterValue required="true">Transcription</command:parameterValue>
+          <dev:type>
+            <maml:name>Whisper.Transcription</maml:name>
+            <maml:uri />
+            <maml:description>
+              <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+            </maml:description>
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: timestamps -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>timestamps</maml:name>
+          <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+          <dev:type>
+            <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <!-- Parameter: timestamps -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>timestamps</maml:name>
+        <command:parameterValue required="true">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>System.Management.Automation.SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <!-- Parameter: source -->
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+        <maml:name>source</maml:name>
+        <command:parameterValue required="true">Transcription</command:parameterValue>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: path -->
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+        <maml:name>path</maml:name>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+        </dev:type>
+        <maml:description>
+          <maml:para>It requires the value of the correct type</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>Export-Text $transcribeResults -path transcript.txt -timestamps</dev:code>
+      </command:example>
+    </command:examples>
+  </command:command>
+  <!-- Cmdlet: Export-WebVTT -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Export-WebVTT</command:name>
+      <command:verb>Export</command:verb>
+      <command:noun>WebVTT</command:noun>
+      <maml:description>
+        <maml:para>Write transcribe results into WebVTT format.</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>The format is documented there: https://en.wikipedia.org/wiki/WebVTT</maml:para>
+    </maml:description>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Export-WebVTT</maml:name>
+        <!-- Parameter: path -->
+        <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+          <maml:name>path</maml:name>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: source -->
+        <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+          <maml:name>source</maml:name>
+          <command:parameterValue required="true">Transcription</command:parameterValue>
+          <dev:type>
+            <maml:name>Whisper.Transcription</maml:name>
+            <maml:uri />
+            <maml:description>
+              <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+            </maml:description>
+          </dev:type>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <!-- Parameter: source -->
+      <command:parameter required="true" globbing="false" pipelineInput="true (ByValue)" position="named">
+        <maml:name>source</maml:name>
+        <command:parameterValue required="true">Transcription</command:parameterValue>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+          <maml:description>
+            <maml:para>It retains all data produced by the language model, including tokens and probabilities</maml:para>
+          </maml:description>
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: path -->
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+        <maml:name>path</maml:name>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes>
+      <command:inputType>
+        <dev:type>
+          <maml:name>Whisper.Transcription</maml:name>
+          <maml:uri />
+        </dev:type>
+        <maml:description>
+          <maml:para>It requires the value of the correct type</maml:para>
+        </maml:description>
+      </command:inputType>
+    </command:inputTypes>
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>Export-WebVTT $transcribeResults -path transcript.vtt</dev:code>
+      </command:example>
+    </command:examples>
+  </command:command>
+  <!-- Cmdlet: Import-WhisperModel -->
+  <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10">
+    <command:details>
+      <command:name>Import-WhisperModel</command:name>
+      <command:verb>Import</command:verb>
+      <command:noun>WhisperModel</command:noun>
+      <maml:description>
+        <maml:para>Load Whisper model from GGML binary file</maml:para>
+      </maml:description>
+    </command:details>
+    <maml:description>
+      <maml:para>The command might take a while to complete, depending on the disk speed.</maml:para>
+    </maml:description>
+    <command:syntax>
+      <!-- Parameter set: __AllParameterSets -->
+      <command:syntaxItem>
+        <maml:name>Import-WhisperModel</maml:name>
+        <!-- Parameter: path -->
+        <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+          <maml:name>path</maml:name>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: adapter -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>adapter</maml:name>
+          <maml:description>
+            <maml:para>Use Get-Adapters command to list available graphics adapter in this computer</maml:para>
+          </maml:description>
+          <command:parameterValue required="true">string</command:parameterValue>
+          <dev:type>
+            <maml:name>System.String</maml:name>
+            <maml:uri />
+          </dev:type>
+        </command:parameter>
+        <!-- Parameter: flags -->
+        <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+          <maml:name>flags</maml:name>
+          <maml:description>
+            <maml:para>To combine multiple flags, use comma for the separator, example: -flags UseReshapedMatMul, Wave64</maml:para>
+            <maml:para>Possible values: None, Wave32, Wave64, NoReshapedMatMul, UseReshapedMatMul, Cloneable</maml:para>
+          </maml:description>
+          <command:parameterValue required="true">eGpuModelFlags</command:parameterValue>
+          <dev:type>
+            <maml:name>Whisper.eGpuModelFlags</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>None</dev:defaultValue>
+          <command:parameterValueGroup>
+            <command:parameterValue required="false" variableLength="false">None</command:parameterValue>
+            <command:parameterValue required="false" variableLength="false">Wave32</command:parameterValue>
+            <command:parameterValue required="false" variableLength="false">Wave64</command:parameterValue>
+            <command:parameterValue required="false" variableLength="false">NoReshapedMatMul</command:parameterValue>
+            <command:parameterValue required="false" variableLength="false">UseReshapedMatMul</command:parameterValue>
+            <command:parameterValue required="false" variableLength="false">Cloneable</command:parameterValue>
+          </command:parameterValueGroup>
+        </command:parameter>
+      </command:syntaxItem>
+    </command:syntax>
+    <command:parameters>
+      <!-- Parameter: path -->
+      <command:parameter required="true" globbing="false" pipelineInput="false" position="0">
+        <maml:name>path</maml:name>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: adapter -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>adapter</maml:name>
+        <maml:description>
+          <maml:para>Use Get-Adapters command to list available graphics adapter in this computer</maml:para>
+        </maml:description>
+        <command:parameterValue required="true">string</command:parameterValue>
+        <dev:type>
+          <maml:name>System.String</maml:name>
+          <maml:uri />
+        </dev:type>
+      </command:parameter>
+      <!-- Parameter: flags -->
+      <command:parameter required="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>flags</maml:name>
+        <maml:description>
+          <maml:para>To combine multiple flags, use comma for the separator, example: -flags UseReshapedMatMul, Wave64</maml:para>
+          <maml:para>Possible values: None, Wave32, Wave64, NoReshapedMatMul, UseReshapedMatMul, Cloneable</maml:para>
+        </maml:description>
+        <command:parameterValue required="true">eGpuModelFlags</command:parameterValue>
+        <dev:type>
+          <maml:name>Whisper.eGpuModelFlags</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>None</dev:defaultValue>
+        <command:parameterValueGroup>
+          <command:parameterValue required="false" variableLength="false">None</command:parameterValue>
+          <command:parameterValue required="false" variableLength="false">Wave32</command:parameterValue>
+          <command:parameterValue required="false" variableLength="false">Wave64</command:parameterValue>
+          <command:parameterValue required="false" variableLength="false">NoReshapedMatMul</command:parameterValue>
+          <command:parameterValue required="false" variableLength="false">UseReshapedMatMul</command:parameterValue>
+          <command:parameterValue required="false" variableLength="false">Cloneable</command:parameterValue>
+        </command:parameterValueGroup>
+      </command:parameter>
+    </command:parameters>
+    <command:inputTypes />
+    <command:returnValues />
+    <command:examples>
+      <command:example>
+        <maml:title>----------  EXAMPLE 1  ----------</maml:title>
+        <dev:code>$m = Import-WhisperModel -path D:\Data\Whisper\ggml-medium.bin</dev:code>
+      </command:example>
+    </command:examples>
+    <maml:relatedLinks>
+      <maml:navigationLink>
+        <maml:linkText>Download models from Hugging Face</maml:linkText>
+        <maml:uri>https://huggingface.co/datasets/ggerganov/whisper.cpp</maml:uri>
+      </maml:navigationLink>
+    </maml:relatedLinks>
+  </command:command>
+</helpItems>
