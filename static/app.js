@@ -3,6 +3,7 @@ const fileInput = document.getElementById("fileInput");
 const fileMeta = document.getElementById("fileMeta");
 const outputFormat = document.getElementById("outputFormat");
 const languageInput = document.getElementById("language");
+const modelSelect = document.getElementById("modelSelect");
 const deviceSelect = document.getElementById("deviceSelect");
 const whisperpsModelSelect = document.getElementById("whisperpsModelSelect");
 const whisperpsModelField = document.getElementById("whisperpsModelField");
@@ -35,6 +36,7 @@ const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
 const tabPanels = Array.from(document.querySelectorAll(".tab-panel"));
 const historyList = document.getElementById("historyList");
 const refreshHistory = document.getElementById("refreshHistory");
+const modelHint = document.getElementById("modelHint");
 
 const steps = Array.from(document.querySelectorAll(".step"));
 const stepOrder = ["uploading", "extracting", "loading_model", "transcribing", "packaging", "done"];
@@ -47,6 +49,8 @@ let uploadRequest = null;
 let lastServerStage = null;
 let debugTimer = null;
 let historyTimer = null;
+let modelMeta = {};
+let cudaVramMb = null;
 
 function formatBytes(bytes) {
   if (bytes === 0) return "0 B";
@@ -315,6 +319,9 @@ function uploadFile(file) {
     formData.append("output_format", outputFormat.value);
     const languageVal = languageInput.value.trim() || "auto";
     formData.append("language", languageVal);
+    if (modelSelect && modelSelect.value) {
+      formData.append("model", modelSelect.value);
+    }
     formData.append("device", deviceSelect.value);
     if (deviceSelect.value === "amd" && whisperpsModelSelect && whisperpsModelSelect.value) {
       formData.append("whisperps_model", whisperpsModelSelect.value);
@@ -571,6 +578,57 @@ function updateEnvBadge(ok) {
   envBadge.style.color = ok ? "var(--accent)" : "#6b1b2d";
 }
 
+function updateModelHint() {
+  if (!modelHint) return;
+  const model = modelSelect ? modelSelect.value : null;
+  const device = deviceSelect ? deviceSelect.value : "auto";
+  const spec = model ? modelMeta[model] || {} : {};
+  const diskMb = spec.disk_mb;
+  const vramMb = spec.vram_mb;
+  const parts = [];
+  if (model) {
+    if (diskMb) {
+      parts.push(`~${(diskMb / 1024).toFixed(1)} GB on disk`);
+    }
+    if (vramMb) {
+      parts.push(`~${(vramMb / 1024).toFixed(1)} GB VRAM needed (float16)`);
+    }
+  }
+  let warning = "";
+  if (device === "cuda" && vramMb) {
+    if (cudaVramMb) {
+      if (vramMb > cudaVramMb) {
+        warning = `Warning: GPU VRAM detected ${ (cudaVramMb / 1024).toFixed(1) } GB; may be insufficient for ${model}.`;
+      } else if (vramMb > cudaVramMb * 0.8) {
+        warning = `Caution: Model may be tight on VRAM (${(vramMb / 1024).toFixed(1)} GB vs ${(cudaVramMb / 1024).toFixed(1)} GB available).`;
+      }
+    } else {
+      warning = "GPU VRAM not detected; ensure your CUDA GPU has enough memory for this model.";
+    }
+  }
+  const message = parts.join(" • ");
+  modelHint.textContent = [message, warning].filter(Boolean).join(" | ");
+  modelHint.classList.toggle("warn", Boolean(warning));
+}
+
+function populateModels(data) {
+  if (!modelSelect) return;
+  const opts = data.model_options || [data.model || "large-v3-turbo"];
+  modelMeta = data.model_specs || {};
+  modelSelect.innerHTML = "";
+  opts.forEach((name) => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    modelSelect.appendChild(option);
+  });
+  const defaultModel = data.model || opts[0];
+  if (opts.includes(defaultModel)) {
+    modelSelect.value = defaultModel;
+  }
+  updateModelHint();
+}
+
 function populateDevices(data) {
   const opts = data.device_options || ["auto", "cpu"];
   deviceSelect.innerHTML = "";
@@ -601,6 +659,7 @@ function populateDevices(data) {
   } else {
     deviceSelect.value = "auto";
   }
+  updateModelHint();
 
   if (whisperpsModelSelect) {
     whisperpsModelSelect.innerHTML = "";
@@ -622,6 +681,8 @@ function fetchPreflight() {
   fetch("/preflight")
     .then((resp) => resp.json())
     .then((data) => {
+      cudaVramMb = data.cuda_vram_mb || null;
+      populateModels(data);
       populateDevices(data);
       updateEnvRow(envPython, data.python_supported, "Python", data.python_version);
       const deviceLabel = data.cuda_available && data.cuda_gpu_name
@@ -720,6 +781,13 @@ debugToggle.addEventListener("click", () => {
     stopDebugTimer();
   }
 });
+
+if (modelSelect) {
+  modelSelect.addEventListener("change", updateModelHint);
+}
+if (deviceSelect) {
+  deviceSelect.addEventListener("change", updateModelHint);
+}
 
 tabButtons.forEach((btn) => {
   btn.addEventListener("click", () => switchTab(btn.dataset.tab));

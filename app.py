@@ -55,6 +55,27 @@ ALLOWED_EXTENSIONS = {
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "2048"))
 MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
 DEFAULT_MODEL = os.getenv("WHISPER_MODEL", "large-v3-turbo")
+MODEL_OPTIONS = [
+    "large-v3-turbo",
+    "large-v3",
+    "large-v2",
+    "distil-large-v3",
+    "medium",
+    "small",
+    "base",
+    "tiny",
+]
+MODEL_SPECS: Dict[str, Dict[str, int]] = {
+    # Approximate disk and VRAM footprints (MB) for float16 GPU use.
+    "large-v3-turbo": {"disk_mb": 5400, "vram_mb": 7000},
+    "large-v3": {"disk_mb": 5200, "vram_mb": 6500},
+    "large-v2": {"disk_mb": 5200, "vram_mb": 6500},
+    "distil-large-v3": {"disk_mb": 3000, "vram_mb": 4000},
+    "medium": {"disk_mb": 1500, "vram_mb": 2500},
+    "small": {"disk_mb": 600, "vram_mb": 1200},
+    "base": {"disk_mb": 150, "vram_mb": 800},
+    "tiny": {"disk_mb": 70, "vram_mb": 512},
+}
 DEFAULT_DEVICE = os.getenv("WHISPER_DEVICE", "auto")
 DEFAULT_COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "auto")
 DEFAULT_BEAM_SIZE = int(os.getenv("WHISPER_BEAM_SIZE", "5"))
@@ -70,6 +91,45 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s",
 )
+
+_cuda_path_added = False
+
+
+def _candidate_cuda_dirs() -> List[Path]:
+    dirs: List[Path] = []
+    for key in ("CUDA_PATH", "CUDA_HOME"):
+        val = os.environ.get(key)
+        if val:
+            dirs.append(Path(val))
+    dirs.extend(
+        [
+            Path(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.4"),
+            Path(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.3"),
+            Path(r"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.0"),
+        ]
+    )
+    return dirs
+
+
+def ensure_cuda_dll_path(job_id: Optional[str]) -> None:
+    """On Windows, add CUDA bin to PATH/DLL search if cublas is installed."""
+    global _cuda_path_added
+    if _cuda_path_added or not sys.platform.startswith("win"):
+        return
+    for base in _candidate_cuda_dirs():
+        bin_dir = base / "bin"
+        cublas = bin_dir / "cublas64_12.dll"
+        if cublas.exists():
+            os.environ["PATH"] = str(bin_dir) + os.pathsep + os.environ.get("PATH", "")
+            try:
+                os.add_dll_directory(str(bin_dir))
+            except Exception:
+                # os.add_dll_directory is only on Python 3.8+; PATH change still helps.
+                pass
+            _cuda_path_added = True
+            log(job_id or "n/a", f"Using CUDA from {bin_dir}")
+            return
+    log(job_id or "n/a", "CUDA cublas64_12.dll not found in default locations; CUDA load may fail.")
 
 
 @dataclass
@@ -665,6 +725,8 @@ def load_model(job_id: str, model_name: str) -> Any:
         compute_type = DEFAULT_COMPUTE_TYPE
         if compute_type == "auto":
             compute_type = "float16" if device == "cuda" else "int8"
+        if device == "cuda":
+            ensure_cuda_dll_path(job_id)
         log(job_id, f"Loading model {model_name} on {device} ({compute_type})")
         model_cache[model_name] = WhisperModel(
             model_name,
@@ -1274,16 +1336,22 @@ def get_preflight_status() -> Dict[str, Any]:
     ffprobe_ok = shutil.which("ffprobe") is not None
     cuda_available = shutil.which("nvidia-smi") is not None
     gpu_name = None
+    gpu_vram_mb: Optional[int] = None
     if cuda_available:
         try:
             result = subprocess.run(
-                ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
+                ["nvidia-smi", "--query-gpu=name,memory.total", "--format=csv,noheader,nounits"],
                 capture_output=True,
                 text=True,
                 timeout=2,
             )
             if result.returncode == 0:
-                gpu_name = result.stdout.strip().splitlines()[0]
+                line = result.stdout.strip().splitlines()[0]
+                parts = [p.strip() for p in line.split(",")]
+                if parts:
+                    gpu_name = parts[0]
+                if len(parts) > 1 and parts[1].isdigit():
+                    gpu_vram_mb = int(parts[1])
         except Exception:
             gpu_name = None
     dml_available = False
@@ -1327,10 +1395,13 @@ def get_preflight_status() -> Dict[str, Any]:
         "whisper": whisper_ok,
         "whisper_error": whisper_error,
         "model": DEFAULT_MODEL,
+        "model_options": MODEL_OPTIONS,
+        "model_specs": MODEL_SPECS,
         "device": DEFAULT_DEVICE,
         "compute_type": DEFAULT_COMPUTE_TYPE,
         "cuda_available": cuda_available,
         "cuda_gpu_name": gpu_name,
+        "cuda_vram_mb": gpu_vram_mb,
         "dml_available": dml_available,
         "dml_note": dml_note,
         "has_amd_gpu": has_amd_gpu,
@@ -1509,6 +1580,7 @@ async def upload(
     word_timestamps: bool = Form(False),
     output_format: str = Form("txt"),
     device: str = Form("auto"),
+    model: str = Form(None),
     whisperps_model: str = Form(None),
 ) -> JSONResponse:
     if not file.filename:
@@ -1518,6 +1590,9 @@ async def upload(
         raise HTTPException(status_code=400, detail="Unsupported file type")
     if output_format not in {"txt", "srt", "vtt", "json"}:
         raise HTTPException(status_code=400, detail="Unsupported output format")
+    chosen_model = model.strip() if model else DEFAULT_MODEL
+    if chosen_model not in MODEL_OPTIONS:
+        chosen_model = DEFAULT_MODEL
 
     job_id = uuid.uuid4().hex
     safe_name = safe_filename(file.filename)
@@ -1554,7 +1629,7 @@ async def upload(
             "word_timestamps": word_timestamps,
             "output_format": output_format,
             "device": device.strip().lower() if device else "auto",
-            "model": DEFAULT_MODEL,
+            "model": chosen_model,
             "whisperps_model": whisperps_model.strip() if whisperps_model else WHISPERPS_MODEL_FILE,
         },
     )

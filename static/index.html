@@ -72,6 +72,12 @@
               <input id="language" type="text" placeholder="auto">
             </label>
             <label class="field">
+              <span>Whisper model</span>
+              <select id="modelSelect">
+                <option value="large-v3-turbo">large-v3-turbo</option>
+              </select>
+            </label>
+            <label class="field">
               <span>Device</span>
               <select id="deviceSelect">
                 <option value="auto">Auto</option>
@@ -88,6 +94,7 @@
               <span>Include word timestamps (JSON only)</span>
             </label>
           </div>
+          <div id="modelHint" class="hint"></div>
 
           <div class="actions">
             <button id="startButton" class="btn primary">Start transcription</button>
